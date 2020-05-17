@@ -14,7 +14,22 @@ const controller = {
     */
     getIndex: function(req, res) {
         // your code here
-        res.render('home'); // This is to load the page initially
+
+        console.log('index before query')
+
+        User.find({}, (err, data) => {
+            if (err) throw err;
+
+            const userObject = []
+
+            data.forEach( doc => {
+                userObject.push(doc.toObject());
+                console.log(doc.toString())
+            })
+
+            res.render('home', {users: userObject}); // This is to load the page initially 
+        })
+        
     },
 
     /*
@@ -26,6 +41,21 @@ const controller = {
     */
     getCheckNumber: function(req, res) {
         // your code here
+        console.log('atleast?')
+
+        User.find({number: req.query.number}, (err, data) => {
+            if (err) {
+                console.log(err)
+            }
+
+            if (!data) {
+                console.log('yes')
+                res.send('')
+            }
+            console.log('you looked')
+
+            res.send(data[0])
+        })
     },
 
     /*
@@ -36,6 +66,31 @@ const controller = {
     */
     getAdd: function(req, res) {
         // your code here
+
+        let newUser = new User({
+            name: req.query.name,
+            number: req.query.number
+        })
+
+        console.log('will add rn')
+
+        newUser.save( (err, user) => {
+            let result;
+            if (err) {
+                console.log(err.errors)
+
+                result = {
+                    success: false,
+                    message: 'User was not created'
+                }
+
+                res.send(result)
+            }                                     
+
+            res.send(user.toObject())
+        })
+
+        
     },
 
     /*
@@ -46,6 +101,13 @@ const controller = {
     */
     getDelete: function (req, res) {
         // your code here
+
+        User.deleteOne({number: req.query.number}, (err,data) => {
+            if (err) throw err;
+            
+            else
+                res.send(data);
+        })
     }
 
 }

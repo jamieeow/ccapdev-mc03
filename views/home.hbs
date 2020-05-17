@@ -26,6 +26,11 @@
             -->
             <div id="contacts">
             <!-- your code here -->
+            {{#if users}}
+                {{#each users}}
+                    {{> card name=this.name number=this.number}}
+                {{/each}}
+            {{/if}}
             </div>
         </div>
     </div>
